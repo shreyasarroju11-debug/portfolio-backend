@@ -1,0 +1,13 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
+const app = express();
+app.use(cors());
+app.use(express.json());
+mongoose.connect(process.env.MONGO_URI).then(()=>console.log("✅ MongoDB Connected")).catch(e=>console.log(e));
+const Project = mongoose.model('Project', { title:String, description:String, tech:[String], github:String, live:String, image:String });
+app.get('/api/projects', async (req,res)=>{ const p=await Project.find(); res.json(p); });
+app.post('/api/projects', async (req,res)=>{ const p=new Project(req.body); await p.save(); res.json(p); });
+app.get('/', (req,res)=>res.send('Shreyas Arroju Portfolio API Running - github.com/shreyasarroju11-debug'));
+app.listen(process.env.PORT||5000, ()=>console.log("Server running"));
